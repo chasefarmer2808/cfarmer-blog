@@ -23,7 +23,6 @@ export function getKvClient(env: Env): KvClient {
 
     default:
       return new InMemoryKvClient();
-      break;
   }
 }
 
