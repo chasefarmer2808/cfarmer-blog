@@ -10,6 +10,9 @@ import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import { SOCIALS } from "@config";
 
+// Prerender for page count.
+export const prerender = true;
+
 const posts = await getCollection("blog");
 
 const sortedPosts = getSortedPosts(posts);
