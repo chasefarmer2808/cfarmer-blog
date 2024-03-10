@@ -1,5 +1,7 @@
 import type socialIcons from "@assets/socialIcons";
 
+export type Env = "dev" | "prd";
+
 export type Site = {
   website: string;
   author: string;

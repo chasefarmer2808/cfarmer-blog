@@ -9,6 +9,10 @@ import Card from "@components/Card";
 import Socials from "@components/Socials.astro";
 import getSortedPosts from "@utils/getSortedPosts";
 import { SOCIALS } from "@config";
+import type { KvSite } from "@utils/kvClient";
+
+// Prerender for page count.
+export const prerender = true;
 
 const posts = await getCollection("blog");
 
@@ -17,6 +21,12 @@ const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 
 const socialCount = SOCIALS.filter(social => social.active).length;
+
+// API fetches.
+const incrementViewsResponse = await fetch(`${Astro.url}/api/view/site`, {
+  method: "PUT",
+});
+const incrementViewsData: KvSite = await incrementViewsResponse.json();
 ---
 
 <Layout>
@@ -43,6 +53,12 @@ const socialCount = SOCIALS.filter(social => social.active).length;
           </div>
         )
       }
+    </section>
+    <section>
+      <b
+        >By the way, this site has been visited {incrementViewsData.views} times.
+        Nice!</b
+      >
     </section>
 
     <Hr />
