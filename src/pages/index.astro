@@ -7,12 +7,9 @@ import LinkButton from "@components/LinkButton.astro";
 import Hr from "@components/Hr.astro";
 import Card from "@components/Card";
 import Socials from "@components/Socials.astro";
+import SiteCount from "@components/SiteCount";
 import getSortedPosts from "@utils/getSortedPosts";
 import { SOCIALS } from "@config";
-import type { KvSite } from "@utils/kvClient";
-
-// Prerender for page count.
-export const prerender = false;
 
 const posts = await getCollection("blog");
 
@@ -21,12 +18,6 @@ const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
 
 const socialCount = SOCIALS.filter(social => social.active).length;
-
-// API fetches.
-const incrementViewsResponse = await fetch(`${Astro.url}/api/view/site`, {
-  method: "PUT",
-});
-const incrementViewsData: KvSite = await incrementViewsResponse.json();
 ---
 
 <Layout>
@@ -54,12 +45,7 @@ const incrementViewsData: KvSite = await incrementViewsResponse.json();
         )
       }
     </section>
-    <section>
-      <b
-        >By the way, this site has been visited {incrementViewsData.views} times.
-        Nice!</b
-      >
-    </section>
+    <SiteCount client:load />
 
     <Hr />
 

@@ -13,7 +13,7 @@ export const GET: APIRoute = async () => {
   return new Response(JSON.stringify({ views: viewCount }), { status: 200 });
 };
 
-export const PUT: APIRoute = async () => {
+export const POST: APIRoute = async () => {
   const newCount = await kv.increment("site", "views", 1);
 
   return new Response(JSON.stringify({ views: newCount }), { status: 200 });
