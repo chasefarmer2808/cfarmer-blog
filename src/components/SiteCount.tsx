@@ -17,7 +17,9 @@ export default function SiteCount() {
 
   return (
     <section>
-      <b>By the way, this site has been visited {count} times. Nice!</b>
+      {count && (
+        <b>By the way, this site has been visited {count} times. Nice!</b>
+      )}
     </section>
   );
 }
