@@ -3,6 +3,8 @@ import { getKvClient } from "@utils/kvClient";
 
 const { ENVIRONMENT } = import.meta.env;
 
+export const prerender = false;
+
 const kv = getKvClient(ENVIRONMENT);
 
 export const GET: APIRoute = async () => {
