@@ -9,7 +9,7 @@ export default function SiteCount() {
       const incrementViewsResponse = await fetch("/api/view/site", {
         method: "POST",
       });
-      console.log(incrementViewsResponse);
+
       const data: KvSite = await incrementViewsResponse.json();
       setCount(data.views);
     })();
