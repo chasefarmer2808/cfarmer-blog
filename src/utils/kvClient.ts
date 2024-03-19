@@ -5,14 +5,17 @@ const { KV_REST_API_URL, KV_REST_API_TOKEN } = import.meta.env;
 
 export interface KvStore {
   site: KvSite;
+  [pageId: string]: KvSite;
 }
 
 export interface KvSite {
   views: number;
+  [field: string]: unknown;
 }
 
 export interface KvClient {
   get<T>(key: keyof KvStore, field: string): Promise<T | null>;
+  set<T>(key: keyof KvStore, field: string, value: T): Promise<number>;
   increment(key: keyof KvStore, field: string, by: number): Promise<number>;
 }
 
@@ -37,7 +40,7 @@ class VercelKvClient implements KvClient {
   }
 
   async get<T>(key: keyof KvStore, field: string): Promise<T | null> {
-    return this.client.hget<T>(key, field);
+    return this.client.hget<T>(key as string, field);
   }
 
   async increment(
@@ -45,7 +48,11 @@ class VercelKvClient implements KvClient {
     field: string,
     by: number
   ): Promise<number> {
-    return this.client.hincrby(key, field, by);
+    return this.client.hincrby(key as string, field, by);
+  }
+
+  async set<T>(key: keyof KvStore, field: string, value: T): Promise<number> {
+    return this.client.hset(key as string, { [field]: value });
   }
 }
 
@@ -62,13 +69,13 @@ class InMemoryKvClient implements KvClient {
 
   async get<T>(key: keyof KvStore, field: string): Promise<T | null> {
     return new Promise((res, rej) => {
-      if (Object.keys(this.store).includes(key)) {
+      if (Object.keys(this.store).includes(key as string)) {
         const keyStore = this.store[key];
         const fieldType = field as keyof typeof keyStore;
 
         res(this.store[key][fieldType] as T);
       } else {
-        rej(null);
+        res(null);
       }
     });
   }
@@ -79,10 +86,10 @@ class InMemoryKvClient implements KvClient {
     by: number
   ): Promise<number> {
     return new Promise((res, rej) => {
-      if (Object.keys(this.store).includes(key)) {
+      if (Object.keys(this.store).includes(key as string)) {
         const keyStore = this.store[key];
         const fieldType = field as keyof typeof keyStore;
-        const currVal = this.store[key][fieldType];
+        const currVal = this.store[key][fieldType] as number;
         const newVal = currVal + by;
 
         this.store[key][fieldType] = newVal;
@@ -91,6 +98,19 @@ class InMemoryKvClient implements KvClient {
       } else {
         rej(0);
       }
+    });
+  }
+
+  async set<T>(key: keyof KvStore, field: string, value: T): Promise<number> {
+    return new Promise((res, rej) => {
+      const keyStore = this.store[key];
+      const fieldType = field as keyof typeof keyStore;
+
+      this.store[key] = {
+        [field]: value,
+        ...this.store[key],
+      };
+      res(0);
     });
   }
 }
