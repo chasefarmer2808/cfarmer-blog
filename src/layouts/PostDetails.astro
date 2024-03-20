@@ -7,6 +7,7 @@ import Datetime from "@components/Datetime";
 import type { CollectionEntry } from "astro:content";
 import { slugifyStr } from "@utils/slugify";
 import ShareLinks from "@components/ShareLinks.astro";
+import PageCount from "@components/PageCount";
 import { SITE } from "@config";
 
 export interface Props {
@@ -73,6 +74,7 @@ const layoutProps = {
       size="lg"
       className="my-2"
     />
+    <PageCount client:load pageSlug={post.slug} />
     <article id="article" role="article" class="prose mx-auto mt-8 max-w-3xl">
       <Content />
     </article>
