@@ -103,9 +103,6 @@ class InMemoryKvClient implements KvClient {
 
   async set<T>(key: keyof KvStore, field: string, value: T): Promise<number> {
     return new Promise((res, rej) => {
-      const keyStore = this.store[key];
-      const fieldType = field as keyof typeof keyStore;
-
       this.store[key] = {
         [field]: value,
         ...this.store[key],
